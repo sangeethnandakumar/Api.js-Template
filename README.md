@@ -3,6 +3,14 @@ Revealing Module Pattern-based generic 'Api.js' template (using Axios and MSAL)
 
 > For use in JavaScript projects (React, Angular etc..)
 
+### Steps to use
+- Install Axios (`npm i axios`)
+- Replace `baseURL` below
+- Replace `scopes` below
+- Ready to use
+
+> Based on `bool` value we pass in `isFormData`, Api.js will either put data as Key-Value FormData or as Raw JSON body
+
 ## Api.js
 
 ```js
