@@ -99,6 +99,7 @@ This is how we can call from a component
 import Api from '../Api';
 import { useMsal } from '@azure/msal-react';
 
+const { instance } = useMsal();
 
 //GET
 const retrieveData = () => {
