@@ -24,7 +24,7 @@ const scopes = [
     'offline_access',
     'profile',
     'email',
-    'https://twileloopsecurity.onmicrosoft.com/52d96116-75b5-4a1e-9f8e-cc6a1fd9632f/Files.Read'
+    'https://xxxx.onmicrosoft.com/xxxxxxxxxxxxx/Files.Read'
 ];
 
 const Api = (function () {
