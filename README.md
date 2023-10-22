@@ -1,5 +1,5 @@
-# Axios-MSAL---Api.js
-Revealing Module Pattern based generic 'Api.js' template (using Axios and MSAL)
+# Api.js Common API helper framework (Using Axios + MSAL)
+Revealing Module Pattern-based generic 'Api.js' template (using Axios and MSAL)
 
 > For use in JavaScript projects (React, Angular etc..)
 
