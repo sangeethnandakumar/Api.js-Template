@@ -11,42 +11,53 @@ Revealing Module Pattern-based generic 'Api.js' template (using Axios and MSAL)
 
 > Based on `bool` value we pass in `isFormData`, Api.js will either put data as Key-Value FormData or as Raw JSON body
 
+> If you didn't pass `msalInstance`, Api.js assumes authorization is not required for that endpoint and never try token accusation
+
 ## Api.js
 
 ```js
 import axios from 'axios';
 
+const baseURL = 'https://localhost:7120';
+const scopes = [
+    'openid',
+    'offline_access',
+    'profile',
+    'email',
+    'https://twileloopsecurity.onmicrosoft.com/52d96116-75b5-4a1e-9f8e-cc6a1fd9632f/Files.Read'
+];
+
 const Api = (function () {
     const axiosInstance = axios.create({
-        baseURL: 'https://localhost:7120',  //Base URL
+        baseURL: baseURL,
     });
 
     const tryRelogin = (msalInstance) => {
-        msalInstance.logoutPopup();
-        setTimeout(() => msalInstance.loginPopup(), 2000);
+        if (msalInstance) {
+            msalInstance.logoutPopup();
+            setTimeout(() => msalInstance.loginPopup(), 2000);
+        }
     }
 
     const fetchToken = async (msalInstance) => {
+        if (!msalInstance) return null;
+
         try {
             const token = await msalInstance.acquireTokenSilent({
-                scopes: [
-                    "openid",
-                    "offline_access",
-                    "profile",
-                    "email",
-                    "https://xxxx.onmicrosoft.com/xxxxxxx/Files.Read", //B2C Scope
-                ],
+                scopes: scopes,
             });
             return token.accessToken;
         } catch (error) {
-            tryRelogin(msalInstance);
+            if (msalInstance) {
+                tryRelogin(msalInstance);
+            }
         }
     }
 
     const handleResponse = (response, onSuccess, onFailure, msalInstance) => {
         if (response.status === 200) {
             onSuccess(response.data);
-        } else if (response.status === 401) {
+        } else if (response.status === 401 && msalInstance) {
             tryRelogin(msalInstance);
         } else {
             onFailure(response);
@@ -57,7 +68,11 @@ const Api = (function () {
         try {
             const token = await fetchToken(msalInstance);
             const headers = isFormData ? { 'Content-Type': 'multipart/form-data' } : {};
-            headers['Authorization'] = `Bearer ${token}`;
+
+            if (token) {
+                headers['Authorization'] = `Bearer ${token}`;
+            }
+
             const response = await method(url, data, { headers });
             handleResponse(response, onSuccess, onFailure, msalInstance);
         } catch (error) {
